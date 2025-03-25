@@ -2,40 +2,42 @@ package com.receiveandconvert.ankanji
 
 import android.content.res.Resources
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.animation.core.Animatable
-import androidx.compose.animation.core.tween
-import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.safeContentPadding
-import androidx.compose.foundation.layout.size
-import androidx.compose.material3.Scaffold
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.List
+import androidx.compose.material.icons.filled.Star
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.key
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import com.opencsv.CSVParserBuilder
 import com.opencsv.CSVReaderBuilder
-import com.receiveandconvert.ankanji.compose.FlippableCard
-import com.receiveandconvert.ankanji.compose.button.NextIconButton
+import com.receiveandconvert.ankanji.compose.card.FlashCard
 import com.receiveandconvert.ankanji.model.Card
+import com.receiveandconvert.ankanji.model.constant.DummyData.DUMMY_CARDS
 import com.receiveandconvert.ankanji.model.enum.JapaneseLevel
 import com.receiveandconvert.ankanji.model.enum.LearningType
+import com.receiveandconvert.ankanji.model.enum.Navigation
 import com.receiveandconvert.ankanji.ui.theme.AnkanjiTheme
-import kotlinx.coroutines.launch
+import com.receiveandconvert.ankanji.util.add
+import com.receiveandconvert.ankanji.util.default
 import java.io.BufferedReader
 import java.io.InputStreamReader
 
@@ -57,87 +59,147 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun MainContent(cards: List<Card>) {
-  Scaffold(modifier = Modifier
-    .fillMaxSize()
-    .padding(5.dp)) { innerPadding ->
-    FlashCard(cards, innerPadding)
+  var selectedTab by remember { mutableIntStateOf(0) }
+
+  Scaffold(
+    modifier = Modifier.fillMaxSize().padding(5.dp),
+    bottomBar = { BottomNavigationBar(onTabSelected = { selectedTab = it }) }
+  ) { paddingValues ->
+    val combinedPaddingValues = paddingValues.add(PaddingValues(10.dp))
+    when (selectedTab) {
+      0 -> FlashCard(cards, Modifier.default(combinedPaddingValues))
+      1 -> ListAnimatedItemsExample(cards, Modifier.default(combinedPaddingValues))
+    }
   }
 }
 
 @Composable
-fun FlashCard(cards: List<Card>, innerPadding: PaddingValues) {
-  val offsetX = remember { Animatable(0f) }
-  val scope = rememberCoroutineScope()
+fun BottomNavigationBar(onTabSelected: (Int) -> Unit) {
+  BottomAppBar(
+    actions = {
+      IconButton(onClick = { onTabSelected(Navigation.DECKS.ordinal) }) {
+        Icon(Icons.Filled.Star, contentDescription = Navigation.DECKS.username)
+      }
+      IconButton(onClick = { onTabSelected(Navigation.LISTS.ordinal) }) {
+        Icon(Icons.AutoMirrored.Filled.List, contentDescription = Navigation.LISTS.username)
+      }
+    }
+  )
+}
 
-  Box(
-    modifier = Modifier
-      .padding(20.dp)
-      .safeContentPadding()
-      .fillMaxSize(), contentAlignment = Alignment.Center
-  ) {
-    if (cards.isEmpty()) return@Box
+@Composable
+private fun ListAnimatedItemsExample(
+  data: List<Card>,
+  modifier: Modifier = Modifier,
+  onAddItem: () -> Unit = {},
+  onRemoveItem: () -> Unit = {},
+  resetOrder: () -> Unit = {},
+  onSortAlphabetically: () -> Unit = {},
+  onSortByLength: () -> Unit = {},
+) {
+  val canAddItem = data.size < 10
+  val canRemoveItem = data.isNotEmpty()
 
-    var activeCard by remember { mutableStateOf(cards.firstOrNull()) }
-    if (activeCard == null) return@Box
+  Scaffold(modifier) { paddingValues ->
+    Column(
+      modifier = Modifier
+        .padding(paddingValues)
+        .fillMaxSize()
+    ) {
+      // Buttons that change the value of displayedItems.
+      AddRemoveButtons(canAddItem, canRemoveItem, onAddItem, onRemoveItem)
+      OrderButtons(resetOrder, onSortAlphabetically, onSortByLength)
 
-    var isFlipped by remember { mutableStateOf(false) }
+      // List that displays the values of displayedItems.
+      ListAnimatedItems(data)
+    }
+  }
+}
 
-    // Use key to reset the animation state when the card changes
-    key(activeCard) {
-      FlippableCard(
-        card = activeCard!!, 
-        isFlipped = isFlipped,
-        onFlipped = { isFlipped = it },
-        modifier = Modifier.offset { IntOffset(offsetX.value.toInt(), 0) }
+@Composable
+fun ListAnimatedItems(
+  items: List<Card>,
+  modifier: Modifier = Modifier
+) {
+  LazyColumn(modifier) {
+    // Use a unique key per item, so that animations work as expected.
+    items(count = items.size, key = { it }) {
+      ListItem(
+        headlineContent = { Text("test-$it") },
+        modifier = Modifier
+          .animateItem(
+            // Optionally add custom animation specs
+          )
+          .fillParentMaxWidth()
+          .padding(horizontal = 8.dp, vertical = 0.dp),
       )
     }
+  }
+}
 
-    NextIconButton(
-      onClick = {
-        scope.launch {
-          offsetX.animateTo(
-            targetValue = 1000f, // Slide to the right
-            animationSpec = tween(durationMillis = 200)
-          )
-          activeCard = cards[(cards.indexOf(activeCard) + 1) % cards.size]
-          isFlipped = false
-          offsetX.snapTo(-1000f) // Move to the left off-screen
-          offsetX.animateTo(
-            targetValue = 0f, // Slide back to the center
-            animationSpec = tween(durationMillis = 200)
-          )
+@Composable
+private fun AddRemoveButtons(
+  canAddItem: Boolean,
+  canRemoveItem: Boolean,
+  onAddItem: () -> Unit,
+  onRemoveItem: () -> Unit
+) {
+  Row(
+    modifier = Modifier.fillMaxWidth(),
+    horizontalArrangement = Arrangement.Center
+  ) {
+    Button(enabled = canAddItem, onClick = onAddItem) {
+      Text("Add Item")
+    }
+    Spacer(modifier = Modifier.padding(25.dp))
+    Button(enabled = canRemoveItem, onClick = onRemoveItem) {
+      Text("Delete Item")
+    }
+  }
+}
+
+@Composable
+private fun OrderButtons(
+  resetOrder: () -> Unit,
+  orderAlphabetically: () -> Unit,
+  orderByLength: () -> Unit
+) {
+  Row(
+    modifier = Modifier.fillMaxWidth(),
+    horizontalArrangement = Arrangement.Center
+  ) {
+    var selectedIndex by remember { mutableIntStateOf(0) }
+    val options = listOf("Reset", "Alphabetical", "Length")
+
+    SingleChoiceSegmentedButtonRow {
+      options.forEachIndexed { index, label ->
+        SegmentedButton(
+          shape = SegmentedButtonDefaults.itemShape(
+            index = index,
+            count = options.size
+          ),
+          onClick = {
+            Log.d("AnimatedOrderedList", "selectedIndex: $selectedIndex")
+            selectedIndex = index
+            when (options[selectedIndex]) {
+              "Reset" -> resetOrder()
+              "Alphabetical" -> orderAlphabetically()
+              "Length" -> orderByLength()
+            }
+          },
+          selected = index == selectedIndex
+        ) {
+          Text(label)
         }
-      },
-      modifier = Modifier
-        .align(Alignment.BottomEnd)
-        .size(75.dp)
-    )
+      }
+    }
   }
 }
 
 @Preview
 @Composable
 fun MainContentPreview() {
-  MainContent(
-    listOf(
-      Card(
-        kanji = "日",
-        level = JapaneseLevel.N5,
-        learningType = LearningType.KANJI,
-        onyomi = "ニチ; ジツ -",
-        kunyomi = "ひ -び",
-        translation = "day, sun, Japan"
-      ),
-      Card(
-        kanji = "月",
-        level = JapaneseLevel.N5,
-        learningType = LearningType.KANJI,
-        onyomi = "ゲツ; ガツ -",
-        kunyomi = "つき -",
-        translation = "month, moon"
-      )
-    )
-  )
+  MainContent(DUMMY_CARDS)
 }
 
 private fun Resources.fetchCards(resourceId: Int): List<Card> {
@@ -162,3 +224,4 @@ private fun Resources.fetchCards(resourceId: Int): List<Card> {
   }
   return cards
 }
+
