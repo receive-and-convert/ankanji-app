@@ -1,10 +1,11 @@
-package com.receiveandconvert.ankanji.compose
+package com.receiveandconvert.ankanji.component
 
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.absolutePadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -13,7 +14,9 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextFieldColors
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -29,25 +32,19 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.receiveandconvert.ankanji.model.Card
-import com.receiveandconvert.ankanji.model.enum.JapaneseLevel
+import com.receiveandconvert.ankanji.model.Card.Companion.isKanjiLearningType
+import com.receiveandconvert.ankanji.model.constant.DummyData.DUMMY_CARDS
 import com.receiveandconvert.ankanji.model.enum.LearningType
 import com.receiveandconvert.ankanji.ui.theme.AnkanjiTheme
 
 @Composable
 @Preview(showBackground = true)
-fun FlippableCardPreview() {
+fun Preview() {
   var isFlipped by remember { mutableStateOf(false) }
 
   AnkanjiTheme {
     FlippableCard(
-      card = Card(
-        kanji = "日",
-        level = JapaneseLevel.N5,
-        learningType = LearningType.KANJI,
-        onyomi = "ニチ ジツ -",
-        kunyomi = "ひ -び",
-        translation = "day, sun, Japan"
-      ),
+      card = DUMMY_CARDS.first(),
       isFlipped = isFlipped,
       onFlipped = { isFlipped = it }
     )
@@ -65,13 +62,13 @@ fun FlippableCard(
 
   Box(
     modifier = modifier
-        .fillMaxWidth()
-        .height(250.dp)
-        .graphicsLayer {
-            rotationY = rotation
-            cameraDistance = 12f * density
-        }
-        .clickable { onFlipped(!isFlipped) },
+      .fillMaxWidth()
+      .height(350.dp)
+      .graphicsLayer {
+        rotationY = rotation
+        cameraDistance = 12f * density
+      }
+      .clickable { onFlipped(!isFlipped) },
     contentAlignment = Alignment.Center
   ) {
     if (rotation <= 90f) {
@@ -89,23 +86,39 @@ fun FrontCardContent(card: Card) {
     colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primary),
     modifier = Modifier.fillMaxSize()
   ) {
-    Box(
-      modifier = Modifier.fillMaxSize()
-    ) {
-      Text(
-        text = card.kanji,
-        style = TextStyle(
-          fontSize = 54.sp,
-          fontWeight = FontWeight.SemiBold
-        ),
-        modifier = Modifier.align(Alignment.Center)
-      )
+    Box(modifier = Modifier.fillMaxSize()) {
+      Column(
+        modifier = Modifier.fillMaxWidth()
+          .align(Alignment.Center)
+      ) {
+        if (!card.isKanjiLearningType()) {
+          Text(
+            text = card.kanji,
+            style = TextStyle(
+              fontSize = 12.sp,
+              fontWeight = FontWeight.SemiBold,
+              textAlign = TextAlign.Center
+            ),
+            modifier = Modifier.fillMaxWidth()
+          )
+        }
+
+        Text(
+          text = if (card.isKanjiLearningType()) card.kanji else card.kunyomi,
+          style = TextStyle(
+            fontSize = 54.sp,
+            fontWeight = FontWeight.SemiBold,
+            textAlign = TextAlign.Center
+          ),
+          modifier = Modifier.fillMaxWidth()
+        )
+      }
       Text(
         text = card.label,
         fontSize = 12.sp,
         modifier = Modifier
-            .align(Alignment.TopEnd)
-            .padding(4.dp)
+          .align(Alignment.TopEnd)
+          .padding(4.dp)
       )
     }
   }
@@ -117,28 +130,54 @@ fun BackCardContent(card: Card) {
     shape = RoundedCornerShape(8.dp),
     colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.secondary),
     modifier = Modifier
-        .fillMaxSize()
-        .graphicsLayer { rotationY = 180f }
+      .fillMaxSize()
+      .graphicsLayer { rotationY = 180f }
   ) {
-    Box(
-      modifier = Modifier.fillMaxSize()
-    ) {
+    Box(modifier = Modifier.fillMaxSize()) {
       Column(
         modifier = Modifier
-            .align(Alignment.Center)
-            .fillMaxWidth(),
+          .align(Alignment.Center)
+          .fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(8.dp)
       ) {
-        Text(
-          text = card.reading,
-          fontSize = 24.sp,
-          textAlign = TextAlign.Center,
-          color = MaterialTheme.colorScheme.onSecondary
-        )
+        if (card.isKanjiLearningType()) {
+          OutlinedTextField(
+            value = card.onyomi,
+            onValueChange = {},
+            label = {
+              Text(
+                text = "Onyomi",
+                color = MaterialTheme.colorScheme.onSecondary
+              )
+            },
+            textStyle = TextStyle.Default.copy(
+              color = MaterialTheme.colorScheme.onSecondary,
+              fontSize = 24.sp
+            ),
+            readOnly = true,
+            enabled = false
+          )
+          OutlinedTextField(
+            value = card.kunyomi,
+            onValueChange = {},
+            label = {
+              Text(
+                text = "Kunyomi",
+                color = MaterialTheme.colorScheme.onSecondary
+              )
+            },
+            textStyle = TextStyle.Default.copy(
+              color = MaterialTheme.colorScheme.onSecondary,
+              fontSize = 24.sp
+            ),
+            readOnly = true,
+            enabled = false
+          )
+        }
         Text(
           text = card.translation,
-          fontSize = 24.sp,
+          fontSize = 18.sp,
           textAlign = TextAlign.Center,
           color = MaterialTheme.colorScheme.onSecondary
         )
@@ -147,8 +186,8 @@ fun BackCardContent(card: Card) {
         text = card.label,
         fontSize = 12.sp,
         modifier = Modifier
-            .align(Alignment.TopEnd)
-            .padding(4.dp)
+          .align(Alignment.TopEnd)
+          .padding(4.dp)
       )
     }
   }

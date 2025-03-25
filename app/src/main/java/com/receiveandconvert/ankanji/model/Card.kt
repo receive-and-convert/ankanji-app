@@ -11,6 +11,10 @@ data class Card(
     val kunyomi: String, // Japanese reading
     val translation: String
 ) {
-    val reading = kunyomi.ifEmpty { onyomi }
+    val fullReading = "$onyomi | $kunyomi"
     val label = "${level.name} - ${learningType.username}"
+
+    companion object {
+        fun Card.isKanjiLearningType() = learningType == LearningType.KANJI
+    }
 }

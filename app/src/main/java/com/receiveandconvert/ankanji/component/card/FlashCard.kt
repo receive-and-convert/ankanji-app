@@ -1,4 +1,4 @@
-package com.receiveandconvert.ankanji.compose.card
+package com.receiveandconvert.ankanji.component.card
 
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween
@@ -6,8 +6,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.offset
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.safeContentPadding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material3.BottomAppBarDefaults
@@ -26,7 +24,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
-import com.receiveandconvert.ankanji.compose.FlippableCard
+import com.receiveandconvert.ankanji.component.FlippableCard
 import com.receiveandconvert.ankanji.model.Card
 import com.receiveandconvert.ankanji.model.constant.DummyData.DUMMY_CARDS
 import com.receiveandconvert.ankanji.util.default
@@ -34,7 +32,7 @@ import kotlinx.coroutines.launch
 
 @Preview
 @Composable
-private fun FlashCardPreview() {
+private fun Preview() {
 	FlashCard(DUMMY_CARDS, Modifier.default(PaddingValues(16.dp)))
 }
 

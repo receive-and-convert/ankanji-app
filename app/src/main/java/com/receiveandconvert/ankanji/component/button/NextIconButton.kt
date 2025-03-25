@@ -1,4 +1,4 @@
-package com.receiveandconvert.ankanji.compose.button
+package com.receiveandconvert.ankanji.component.button
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.shape.CircleShape
