@@ -12,8 +12,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -22,6 +20,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -29,18 +28,26 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.receiveandconvert.ankanji.constant.DummyData.dummyVocabularyCards
+import com.receiveandconvert.ankanji.constant.DummyData.dummyCard
+import com.receiveandconvert.ankanji.constant.DummyData.dummyCards
+import com.receiveandconvert.ankanji.enum.CardType
 import com.receiveandconvert.ankanji.model.Card
 import com.receiveandconvert.ankanji.ui.theme.AnkanjiTheme
+import com.receiveandconvert.ankanji.ui.theme.ExpressionBackCardColor
+import com.receiveandconvert.ankanji.ui.theme.ExpressionFrontCardColor
+import com.receiveandconvert.ankanji.ui.theme.KanjiCardBackColor
+import com.receiveandconvert.ankanji.ui.theme.KanjiCardFrontColor
+import com.receiveandconvert.ankanji.ui.theme.VocabularyBackCardColor
+import com.receiveandconvert.ankanji.ui.theme.VocabularyFrontCardColor
 
+@Preview(widthDp = 360)
 @Composable
-@Preview(showBackground = true)
-fun Preview() {
+fun FlippableCardPreview() {
   var isFlipped by remember { mutableStateOf(false) }
 
   AnkanjiTheme {
     FlippableCard(
-      card = dummyVocabularyCards.first(),
+      card = dummyCards.first(),
       isFlipped = isFlipped,
       onFlipped = { isFlipped = it }
     )
@@ -75,11 +82,20 @@ fun FlippableCard(
   }
 }
 
+@Preview(widthDp = 175, heightDp = 175)
+@Composable
+fun FrontCardPreview() {
+  FrontCardContent(dummyCard)
+}
+
 @Composable
 fun FrontCardContent(card: Card) {
   Card(
     shape = RoundedCornerShape(8.dp),
-    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primary),
+    colors = CardDefaults.cardColors(
+      containerColor = card.determineContainerColor(false),
+      contentColor = Color.Black
+    ),
     modifier = Modifier.fillMaxSize()
   ) {
     Box(modifier = Modifier.fillMaxSize()) {
@@ -89,7 +105,7 @@ fun FrontCardContent(card: Card) {
           .align(Alignment.Center)
       ) {
         Text(
-          text = card.kanji,
+          text = if (card.kanji.isNotEmpty()) card.kanji else card.kana,
           style = TextStyle(
             fontSize = 48.sp,
             fontWeight = FontWeight.SemiBold,
@@ -109,11 +125,22 @@ fun FrontCardContent(card: Card) {
   }
 }
 
+@Preview(widthDp = 175, heightDp = 175)
+@Composable
+fun BackCardPreview() {
+  Box(modifier = Modifier.graphicsLayer { rotationY = 180f }) {
+    BackCardContent(dummyCard)
+  }
+}
+
 @Composable
 fun BackCardContent(card: Card) {
   Card(
     shape = RoundedCornerShape(8.dp),
-    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.secondary),
+    colors = CardDefaults.cardColors(
+      containerColor = card.determineContainerColor(true),
+      contentColor = Color.Black
+    ),
     modifier = Modifier
       .fillMaxSize()
       .graphicsLayer { rotationY = 180f }
@@ -126,27 +153,14 @@ fun BackCardContent(card: Card) {
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(8.dp)
       ) {
-          OutlinedTextField(
-            value = card.kana,
-            onValueChange = {},
-            label = {
-              Text(
-                text = "Kana",
-                color = MaterialTheme.colorScheme.onSecondary
-              )
-            },
-            textStyle = TextStyle.Default.copy(
-              color = MaterialTheme.colorScheme.onSecondary,
-              fontSize = 24.sp
-            ),
-            readOnly = true,
-            enabled = false
-          )
+        Text(
+          text = card.kana,
+          fontSize = 30.sp
+        )
         Text(
           text = card.translation,
           fontSize = 18.sp,
-          textAlign = TextAlign.Center,
-          color = MaterialTheme.colorScheme.onSecondary
+          textAlign = TextAlign.Center
         )
       }
       Text(
@@ -158,4 +172,11 @@ fun BackCardContent(card: Card) {
       )
     }
   }
+}
+
+@Composable
+private fun Card.determineContainerColor(isFlipped: Boolean) = when (cardType) {
+  CardType.EXPRESSION -> if (!isFlipped) ExpressionFrontCardColor else ExpressionBackCardColor
+  CardType.KANJI -> if (!isFlipped) KanjiCardFrontColor else KanjiCardBackColor
+  CardType.VOCABULARY -> if (!isFlipped) VocabularyFrontCardColor else VocabularyBackCardColor
 }

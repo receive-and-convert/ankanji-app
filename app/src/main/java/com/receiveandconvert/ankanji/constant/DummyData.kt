@@ -124,8 +124,16 @@ object DummyData {
 		)
 	)
 
-	val dummyCards = emptyList<Card>()
-		.plus(dummyExpressionCards)
+	val dummyCards = dummyExpressionCards
 		.plus(dummyKanjiCards)
 		.plus(dummyVocabularyCards)
+
+	val dummyCard = Card(
+		kanji = "三つ",
+		kana = "みっつ",
+		translation = "three",
+		level = CardLevel.N1,
+		usageType = "numeric",
+		cardType = CardType.VOCABULARY
+	)
 }
