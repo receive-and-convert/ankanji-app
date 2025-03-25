@@ -44,9 +44,11 @@ class MainActivity : ComponentActivity() {
     val vocabularyCardN5 = resources.fetchCards(R.raw.n5_vocabulary, CardLevel.N5, CardType.VOCABULARY)
     val vocabularyCardN4 = resources.fetchCards(R.raw.n4_vocabulary, CardLevel.N4, CardType.VOCABULARY)
 
+    val mergedCards = expressionCardN5 + expressionCardN4 + kanjiCardN5 + kanjiCardN4 + vocabularyCardN5 + vocabularyCardN4
+
     setContent {
       AnkanjiTheme {
-        MainContent(expressionCardN5)
+        MainContent(mergedCards)
       }
     }
   }
