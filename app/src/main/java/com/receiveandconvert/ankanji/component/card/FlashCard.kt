@@ -38,16 +38,18 @@ private fun Preview() {
 
 @Composable
 fun FlashCard(cards: List<Card>, modifier: Modifier = Modifier) {
+	val shuffledCards = remember { cards.shuffled() } // Shuffle the cards
 	val offsetX = remember { Animatable(0f) }
 	val scope = rememberCoroutineScope()
+	var isAnimating by remember { mutableStateOf(false) } // Add a flag to track animation state
 
 	Box(
 		modifier = modifier
 			.fillMaxSize(), contentAlignment = Alignment.Center
 	) {
-		if (cards.isEmpty()) return@Box
+		if (shuffledCards.isEmpty()) return@Box
 
-		var activeCard by remember { mutableStateOf(cards.firstOrNull()) }
+		var activeCard by remember { mutableStateOf(shuffledCards.firstOrNull()) }
 		if (activeCard == null) return@Box
 
 		var isFlipped by remember { mutableStateOf(false) }
@@ -64,18 +66,22 @@ fun FlashCard(cards: List<Card>, modifier: Modifier = Modifier) {
 
 		FloatingActionButton(
 			onClick = {
-				scope.launch {
-					offsetX.animateTo(
-						targetValue = 1000f, // Slide to the right
-						animationSpec = tween(durationMillis = 200)
-					)
-					activeCard = cards[(cards.indexOf(activeCard) + 1) % cards.size]
-					isFlipped = false
-					offsetX.snapTo(-1000f) // Move to the left off-screen
-					offsetX.animateTo(
-						targetValue = 0f, // Slide back to the center
-						animationSpec = tween(durationMillis = 200)
-					)
+				if (!isAnimating) { // Check if an animation is already running
+					scope.launch {
+						isAnimating = true // Set the flag to true when animation starts
+						offsetX.animateTo(
+							targetValue = 1000f, // Slide to the right
+							animationSpec = tween(durationMillis = 150)
+						)
+						activeCard = shuffledCards[(shuffledCards.indexOf(activeCard) + 1) % shuffledCards.size]
+						isFlipped = false
+						offsetX.snapTo(-1000f) // Move to the left off-screen
+						offsetX.animateTo(
+							targetValue = 0f, // Slide back to the center
+							animationSpec = tween(durationMillis = 150)
+						)
+						isAnimating = false // Reset the flag when animation ends
+					}
 				}
 			},
 			containerColor = BottomAppBarDefaults.bottomAppBarFabColor,
@@ -86,3 +92,4 @@ fun FlashCard(cards: List<Card>, modifier: Modifier = Modifier) {
 		}
 	}
 }
+
