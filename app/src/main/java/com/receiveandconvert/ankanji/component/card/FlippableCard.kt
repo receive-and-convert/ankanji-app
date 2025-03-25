@@ -5,7 +5,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.absolutePadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -16,7 +15,6 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextFieldColors
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -31,10 +29,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.receiveandconvert.ankanji.constant.DummyData.dummyVocabularyCards
 import com.receiveandconvert.ankanji.model.Card
-import com.receiveandconvert.ankanji.model.Card.Companion.isKanjiLearningType
-import com.receiveandconvert.ankanji.model.constant.DummyData.DUMMY_CARDS
-import com.receiveandconvert.ankanji.model.enum.LearningType
 import com.receiveandconvert.ankanji.ui.theme.AnkanjiTheme
 
 @Composable
@@ -44,7 +40,7 @@ fun Preview() {
 
   AnkanjiTheme {
     FlippableCard(
-      card = DUMMY_CARDS.first(),
+      card = dummyVocabularyCards.first(),
       isFlipped = isFlipped,
       onFlipped = { isFlipped = it }
     )
@@ -88,25 +84,14 @@ fun FrontCardContent(card: Card) {
   ) {
     Box(modifier = Modifier.fillMaxSize()) {
       Column(
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier
+          .fillMaxWidth()
           .align(Alignment.Center)
       ) {
-        if (!card.isKanjiLearningType()) {
-          Text(
-            text = card.kanji,
-            style = TextStyle(
-              fontSize = 12.sp,
-              fontWeight = FontWeight.SemiBold,
-              textAlign = TextAlign.Center
-            ),
-            modifier = Modifier.fillMaxWidth()
-          )
-        }
-
         Text(
-          text = if (card.isKanjiLearningType()) card.kanji else card.kunyomi,
+          text = card.kanji,
           style = TextStyle(
-            fontSize = 54.sp,
+            fontSize = 48.sp,
             fontWeight = FontWeight.SemiBold,
             textAlign = TextAlign.Center
           ),
@@ -114,7 +99,7 @@ fun FrontCardContent(card: Card) {
         )
       }
       Text(
-        text = card.label,
+        text = card.level.name,
         fontSize = 12.sp,
         modifier = Modifier
           .align(Alignment.TopEnd)
@@ -141,13 +126,12 @@ fun BackCardContent(card: Card) {
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(8.dp)
       ) {
-        if (card.isKanjiLearningType()) {
           OutlinedTextField(
-            value = card.onyomi,
+            value = card.kana,
             onValueChange = {},
             label = {
               Text(
-                text = "Onyomi",
+                text = "Kana",
                 color = MaterialTheme.colorScheme.onSecondary
               )
             },
@@ -158,23 +142,6 @@ fun BackCardContent(card: Card) {
             readOnly = true,
             enabled = false
           )
-          OutlinedTextField(
-            value = card.kunyomi,
-            onValueChange = {},
-            label = {
-              Text(
-                text = "Kunyomi",
-                color = MaterialTheme.colorScheme.onSecondary
-              )
-            },
-            textStyle = TextStyle.Default.copy(
-              color = MaterialTheme.colorScheme.onSecondary,
-              fontSize = 24.sp
-            ),
-            readOnly = true,
-            enabled = false
-          )
-        }
         Text(
           text = card.translation,
           fontSize = 18.sp,
@@ -183,7 +150,7 @@ fun BackCardContent(card: Card) {
         )
       }
       Text(
-        text = card.label,
+        text = card.level.name,
         fontSize = 12.sp,
         modifier = Modifier
           .align(Alignment.TopEnd)

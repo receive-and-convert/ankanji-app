@@ -9,11 +9,10 @@ import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.tooling.preview.Preview
-import com.receiveandconvert.ankanji.model.enum.Navigation
+import com.receiveandconvert.ankanji.enum.Navigation
 
 @Preview
 @Composable

@@ -11,21 +11,23 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.receiveandconvert.ankanji.component.button.MultiChoiceButtons
 import com.receiveandconvert.ankanji.component.button.toMutableStateListOfBoolean
 import com.receiveandconvert.ankanji.component.list.AnimatedList
+import com.receiveandconvert.ankanji.constant.DummyData.dummyCards
+import com.receiveandconvert.ankanji.enum.CardLevel
 import com.receiveandconvert.ankanji.model.Card
 import com.receiveandconvert.ankanji.model.SegmentedButtonParameter
-import com.receiveandconvert.ankanji.model.constant.DummyData.DUMMY_CARDS
-import com.receiveandconvert.ankanji.model.enum.JapaneseLevel
 import com.receiveandconvert.ankanji.util.convertToMap
 
 @Preview
 @Composable
 private fun Preview() {
-	ListPage(DUMMY_CARDS)
+	ListPage(dummyCards)
 }
 
 @Composable
 fun ListPage(cards: List<Card>, modifier: Modifier = Modifier) {
-	val selectedOptions = toMutableStateListOfBoolean(JapaneseLevel.entries.size)
+	val selectedOptions = toMutableStateListOfBoolean(CardLevel.entries.size, true)
+	val modifiedCards = cards.filter { selectedOptions[it.level.ordinal] }
+		.sortedByDescending { it.level }
 
 	Scaffold(modifier) { paddingValues ->
 		Column(
@@ -35,7 +37,7 @@ fun ListPage(cards: List<Card>, modifier: Modifier = Modifier) {
 		) {
 			// Buttons that change the value of displayedItems.
 			MultiChoiceButtons(
-				options = JapaneseLevel.entries.convertToMap {
+				options = CardLevel.entries.convertToMap {
 					it.name to SegmentedButtonParameter(label = { Text(it.name) })
 				},
 				selectedOptions = selectedOptions,
@@ -43,7 +45,7 @@ fun ListPage(cards: List<Card>, modifier: Modifier = Modifier) {
 			)
 
 			// List that displays the values of displayedItems.
-			AnimatedList(cards)
+			AnimatedList(modifiedCards)
 		}
 	}
 }
