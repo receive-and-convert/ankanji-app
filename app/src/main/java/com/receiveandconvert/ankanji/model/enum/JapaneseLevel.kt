@@ -5,5 +5,15 @@ enum class JapaneseLevel {
     N4,
     N3,
     N2,
-    N1
+    N1;
+
+    companion object {
+        fun safeValueOf(value: String): JapaneseLevel {
+            return try {
+                valueOf(value.uppercase())
+            } catch (e: IllegalArgumentException) {
+                N5
+            }
+        }
+    }
 }
