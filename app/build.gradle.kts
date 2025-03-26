@@ -49,6 +49,7 @@ dependencies {
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
     implementation(libs.file.opencsv)
+    implementation(libs.bundles.androidx.paging)
 
     testImplementation(libs.junit)
 

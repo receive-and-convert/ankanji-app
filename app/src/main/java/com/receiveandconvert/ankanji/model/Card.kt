@@ -1,20 +1,13 @@
 package com.receiveandconvert.ankanji.model
 
-import com.receiveandconvert.ankanji.model.enum.JapaneseLevel
-import com.receiveandconvert.ankanji.model.enum.LearningType
+import com.receiveandconvert.ankanji.enum.CardLevel
+import com.receiveandconvert.ankanji.enum.CardType
 
-data class Card(
-    val kanji: String,
-    val level: JapaneseLevel,
-    val learningType: LearningType,
-    val onyomi: String, // Chinese-adapted japanese reading
-    val kunyomi: String, // Japanese reading
-    val translation: String
-) {
-    val fullReading = "$onyomi | $kunyomi"
-    val label = "${level.name} - ${learningType.username}"
-
-    companion object {
-        fun Card.isKanjiLearningType() = learningType == LearningType.KANJI
-    }
-}
+class Card(
+	val kanji: String = "",
+	val kana: String,
+	val translation: String,
+	val level: CardLevel,
+	val usageType: String = "",
+	val cardType: CardType
+)

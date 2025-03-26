@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.offset
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material3.BottomAppBarDefaults
 import androidx.compose.material3.FloatingActionButton
@@ -25,15 +26,15 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import com.receiveandconvert.ankanji.component.FlippableCard
+import com.receiveandconvert.ankanji.constant.DummyData.dummyVocabularyCards
 import com.receiveandconvert.ankanji.model.Card
-import com.receiveandconvert.ankanji.model.constant.DummyData.DUMMY_CARDS
 import com.receiveandconvert.ankanji.util.default
 import kotlinx.coroutines.launch
 
 @Preview
 @Composable
 private fun Preview() {
-	FlashCard(DUMMY_CARDS, Modifier.default(PaddingValues(16.dp)))
+	FlashCard(dummyVocabularyCards, Modifier.default(PaddingValues(16.dp)))
 }
 
 @Composable
@@ -64,6 +65,35 @@ fun FlashCard(cards: List<Card>, modifier: Modifier = Modifier) {
 			)
 		}
 
+		// Previous card button
+		FloatingActionButton(
+			onClick = {
+				if (!isAnimating) { // Check if an animation is already running
+					scope.launch {
+						isAnimating = true // Set the flag to true when animation starts
+						offsetX.animateTo(
+							targetValue = -1000f, // Slide to the left
+							animationSpec = tween(durationMillis = 150)
+						)
+						activeCard = shuffledCards[(shuffledCards.indexOf(activeCard) - 1 + shuffledCards.size) % shuffledCards.size]
+						isFlipped = false
+						offsetX.snapTo(1000f) // Move to the right off-screen
+						offsetX.animateTo(
+							targetValue = 0f, // Slide back to the center
+							animationSpec = tween(durationMillis = 150)
+						)
+						isAnimating = false // Reset the flag when animation ends
+					}
+				}
+			},
+			containerColor = BottomAppBarDefaults.bottomAppBarFabColor,
+			elevation = FloatingActionButtonDefaults.bottomAppBarFabElevation(),
+			modifier = Modifier.align(Alignment.BottomStart)
+		) {
+			Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "PREVIOUS")
+		}
+
+		// Next card button
 		FloatingActionButton(
 			onClick = {
 				if (!isAnimating) { // Check if an animation is already running
@@ -92,4 +122,3 @@ fun FlashCard(cards: List<Card>, modifier: Modifier = Modifier) {
 		}
 	}
 }
-

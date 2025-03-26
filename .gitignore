@@ -16,9 +16,8 @@ output.json
 
 # IntelliJ
 *.iml
-.gradle
 .DS_Store
-/build
+/.idea
 /captures
 .externalNativeBuild
 .cxx

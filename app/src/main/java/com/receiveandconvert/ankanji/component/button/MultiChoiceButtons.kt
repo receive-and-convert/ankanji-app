@@ -1,8 +1,6 @@
 package com.receiveandconvert.ankanji.component.button
 
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
-import androidx.compose.material.icons.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MultiChoiceSegmentedButtonRow
@@ -14,16 +12,16 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.tooling.preview.Preview
+import com.receiveandconvert.ankanji.enum.CardLevel
 import com.receiveandconvert.ankanji.model.SegmentedButtonParameter
-import com.receiveandconvert.ankanji.model.enum.JapaneseLevel
 import com.receiveandconvert.ankanji.util.convertToMap
 
 @Preview
 @Composable
 private fun Preview() {
-	val selectedOptions = toMutableStateListOfBoolean(JapaneseLevel.entries.size)
+	val selectedOptions = toMutableStateListOfBoolean(CardLevel.entries.size, true)
 
-	val options = JapaneseLevel.entries.convertToMap {
+	val options = CardLevel.entries.convertToMap {
 		it.name to SegmentedButtonParameter(
 			label = { Text(it.name) }
 		)
@@ -44,10 +42,7 @@ fun toMutableStateListOfBoolean(size: Int, defaultValue: Boolean = false): Snaps
 fun MultiChoiceButtons(
 	options: MutableMap<String, SegmentedButtonParameter>,
 	selectedOptions: List<Boolean>,
-	onCheckedChange: (Int, Boolean) -> Unit,
-	onReset: () -> Unit = {
-		selectedOptions.forEachIndexed { index, _ -> onCheckedChange(index, false) }
-	}
+	onCheckedChange: (Int, Boolean) -> Unit
 ) {
 	options.plusAssign(Pair("Reset", SegmentedButtonParameter(
 		label = { Icon(Icons.Default.Refresh, contentDescription = "Reset") }
@@ -62,7 +57,10 @@ fun MultiChoiceButtons(
 					count = options.size
 				),
 				checked = checked,
-				onCheckedChange = { if (key == "Reset") onReset() else onCheckedChange(index, !checked) },
+				onCheckedChange = {
+					if (key == "Reset") selectedOptions.forEachIndexed { index, _ -> onCheckedChange(index, true) }
+					else onCheckedChange(index, !checked)
+													},
 				icon = { SegmentedButtonDefaults.Icon(active = checked) },
 				label = parameter?.label ?: {  }
 			)
