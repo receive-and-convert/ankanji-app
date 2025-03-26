@@ -37,6 +37,15 @@ android {
     buildFeatures {
         compose = true
     }
+
+    productFlavors {
+        create("dev") {
+            dimension = "environment"
+        }
+        create("prod") {
+            dimension = "environment"
+        }
+    }
 }
 
 dependencies {
@@ -50,8 +59,9 @@ dependencies {
     implementation(libs.androidx.material3)
     implementation(libs.file.opencsv)
     implementation(libs.bundles.androidx.paging)
+    implementation(libs.androidx.navigation.compose)
 
-    testImplementation(libs.junit)
+    testImplementation(libs.bundles.test.unit)
 
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

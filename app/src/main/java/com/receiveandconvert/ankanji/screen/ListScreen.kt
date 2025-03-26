@@ -1,4 +1,4 @@
-package com.receiveandconvert.ankanji.activity
+package com.receiveandconvert.ankanji.screen
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -10,21 +10,24 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.receiveandconvert.ankanji.component.button.MultiChoiceButtons
 import com.receiveandconvert.ankanji.component.button.toMutableStateListOfBoolean
-import com.receiveandconvert.ankanji.component.list.AnimatedList
-import com.receiveandconvert.ankanji.constant.DummyData.dummyCards
-import com.receiveandconvert.ankanji.enum.CardLevel
-import com.receiveandconvert.ankanji.model.Card
+import com.receiveandconvert.ankanji.component.list.CardAnimatedList
 import com.receiveandconvert.ankanji.model.SegmentedButtonParameter
+import com.receiveandconvert.ankanji.model.card.Card
+import com.receiveandconvert.ankanji.model.card.CardLevel
+import com.receiveandconvert.ankanji.model.constant.DummyData.dummyCards
 import com.receiveandconvert.ankanji.util.convertToMap
 
 @Preview
 @Composable
-private fun Preview() {
-	ListPage(dummyCards)
+fun ListScreenPreview() {
+	ListScreen(dummyCards)
 }
 
 @Composable
-fun ListPage(cards: List<Card>, modifier: Modifier = Modifier) {
+fun ListScreen(
+	cards: List<Card>,
+	modifier: Modifier = Modifier
+) {
 	val selectedOptions = toMutableStateListOfBoolean(CardLevel.entries.size, true)
 	val modifiedCards = cards.filter { selectedOptions[it.level.ordinal] }
 		.sortedByDescending { it.level }
@@ -45,7 +48,7 @@ fun ListPage(cards: List<Card>, modifier: Modifier = Modifier) {
 			)
 
 			// List that displays the values of displayedItems.
-			AnimatedList(modifiedCards)
+			CardAnimatedList(modifiedCards)
 		}
 	}
 }

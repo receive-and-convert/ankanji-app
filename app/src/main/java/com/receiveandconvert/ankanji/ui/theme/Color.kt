@@ -19,3 +19,13 @@ val KanjiCardBackColor = Color(0xFF91C791)
 
 val VocabularyFrontCardColor = Color(0xFFD2CFEF)
 val VocabularyBackCardColor = Color(0xFF9E96C7)
+
+// Color pattern for card level (red (N1) to green(N1))
+val N1Color = Color(0xFFE74C3C)
+val N2Color = Color(0xFFE67E22)
+val N3Color = Color(0xFFF1C40F)
+val N4Color = Color(0xFF2ECC71)
+val N5Color = Color(0xFF3498DB)
+
+// Icon color
+val PlayIconColor = Color(0xFF399A3B)

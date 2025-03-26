@@ -1,8 +1,9 @@
-package com.receiveandconvert.ankanji.constant
+package com.receiveandconvert.ankanji.model.constant
 
-import com.receiveandconvert.ankanji.enum.CardLevel
-import com.receiveandconvert.ankanji.enum.CardType
-import com.receiveandconvert.ankanji.model.Card
+import com.receiveandconvert.ankanji.model.card.CardLevel
+import com.receiveandconvert.ankanji.model.card.CardType
+import com.receiveandconvert.ankanji.model.card.Card
+import com.receiveandconvert.ankanji.model.Deck
 
 object DummyData {
 	val dummyExpressionCards = listOf<Card>(
@@ -10,31 +11,31 @@ object DummyData {
 			kana = "おはよう",
 			translation = "good morning",
 			level = CardLevel.N5,
-			cardType = CardType.EXPRESSION
+			type = CardType.EXPRESSION
 		),
 		Card(
 			kana = "こんにちは",
 			translation = "good afternoon",
 			level = CardLevel.N4,
-			cardType = CardType.EXPRESSION
+			type = CardType.EXPRESSION
 		),
 		Card(
 			kana = "こんばんは",
 			translation = "good evening",
 			level = CardLevel.N3,
-			cardType = CardType.EXPRESSION
+			type = CardType.EXPRESSION
 		),
 		Card(
 			kana = "おやすみなさい",
 			translation = "good night",
 			level = CardLevel.N2,
-			cardType = CardType.EXPRESSION
+			type = CardType.EXPRESSION
 		),
 		Card(
 			kana = "さようなら",
 			translation = "goodbye",
 			level = CardLevel.N1,
-			cardType = CardType.EXPRESSION
+			type = CardType.EXPRESSION
 		)
 	)
 
@@ -45,7 +46,7 @@ object DummyData {
 			translation = "one",
 			level = CardLevel.N5,
 			usageType = "numeric, prefix, suffix",
-			cardType = CardType.EXPRESSION
+			type = CardType.EXPRESSION
 		),
 		Card(
 			kanji = "七",
@@ -53,7 +54,7 @@ object DummyData {
 			translation = "seven",
 			level = CardLevel.N4,
 			usageType = "numeric",
-			cardType = CardType.EXPRESSION
+			type = CardType.EXPRESSION
 		),
 		Card(
 			kanji = "万",
@@ -61,7 +62,7 @@ object DummyData {
 			translation = "ten thousand",
 			level = CardLevel.N3,
 			usageType = "numeric, prefix",
-			cardType = CardType.EXPRESSION
+			type = CardType.EXPRESSION
 		),
 		Card(
 			kanji = "万引き",
@@ -69,7 +70,7 @@ object DummyData {
 			translation = "shoplifting, shoplifter",
 			level = CardLevel.N2,
 			usageType = "n, vs",
-			cardType = CardType.EXPRESSION
+			type = CardType.EXPRESSION
 		),
 		Card(
 			kanji = "三",
@@ -77,7 +78,7 @@ object DummyData {
 			translation = "three",
 			level = CardLevel.N1,
 			usageType = "numeric",
-			cardType = CardType.EXPRESSION
+			type = CardType.EXPRESSION
 		),
 	)
 
@@ -88,7 +89,7 @@ object DummyData {
 			translation = "one",
 			level = CardLevel.N5,
 			usageType = "numeric",
-			cardType = CardType.VOCABULARY
+			type = CardType.VOCABULARY
 		),
 		Card(
 			kanji = "七つ",
@@ -96,7 +97,7 @@ object DummyData {
 			translation = "seven",
 			level = CardLevel.N4,
 			usageType = "numeric",
-			cardType = CardType.VOCABULARY
+			type = CardType.VOCABULARY
 		),
 		Card(
 			kanji = "万",
@@ -104,7 +105,7 @@ object DummyData {
 			translation = "ten thousand",
 			level = CardLevel.N3,
 			usageType = "numeric",
-			cardType = CardType.VOCABULARY
+			type = CardType.VOCABULARY
 		),
 		Card(
 			kanji = "万引き",
@@ -112,7 +113,7 @@ object DummyData {
 			translation = "shoplifting, shoplifter",
 			level = CardLevel.N2,
 			usageType = "n, vs",
-			cardType = CardType.VOCABULARY
+			type = CardType.VOCABULARY
 		),
 		Card(
 			kanji = "三つ",
@@ -120,7 +121,7 @@ object DummyData {
 			translation = "three",
 			level = CardLevel.N1,
 			usageType = "numeric",
-			cardType = CardType.VOCABULARY
+			type = CardType.VOCABULARY
 		)
 	)
 
@@ -134,6 +135,21 @@ object DummyData {
 		translation = "three",
 		level = CardLevel.N1,
 		usageType = "numeric",
-		cardType = CardType.VOCABULARY
+		type = CardType.VOCABULARY
+	)
+
+	val dummyDecks = listOf(
+		Deck(
+			id = 1,
+			name = "Deck 1",
+			description = "This is the first deck",
+			cardCount = 10
+		),
+		Deck(
+			id = 2,
+			name = "Deck 2",
+			description = "This is the second deck",
+			cardCount = 20
+		)
 	)
 }

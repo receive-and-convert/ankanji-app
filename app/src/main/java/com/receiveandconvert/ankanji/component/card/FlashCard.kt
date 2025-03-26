@@ -26,15 +26,18 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import com.receiveandconvert.ankanji.component.FlippableCard
-import com.receiveandconvert.ankanji.constant.DummyData.dummyVocabularyCards
-import com.receiveandconvert.ankanji.model.Card
+import com.receiveandconvert.ankanji.model.card.Card
+import com.receiveandconvert.ankanji.model.constant.DummyData.dummyCards
 import com.receiveandconvert.ankanji.util.default
 import kotlinx.coroutines.launch
 
 @Preview
 @Composable
 private fun Preview() {
-	FlashCard(dummyVocabularyCards, Modifier.default(PaddingValues(16.dp)))
+	FlashCard(
+		cards = dummyCards,
+		modifier = Modifier.default(PaddingValues(16.dp))
+	)
 }
 
 @Composable
@@ -122,3 +125,4 @@ fun FlashCard(cards: List<Card>, modifier: Modifier = Modifier) {
 		}
 	}
 }
+

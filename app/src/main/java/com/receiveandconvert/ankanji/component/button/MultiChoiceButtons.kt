@@ -11,8 +11,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.snapshots.SnapshotStateList
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import com.receiveandconvert.ankanji.enum.CardLevel
+import com.receiveandconvert.ankanji.R
+import com.receiveandconvert.ankanji.model.card.CardLevel
 import com.receiveandconvert.ankanji.model.SegmentedButtonParameter
 import com.receiveandconvert.ankanji.util.convertToMap
 
@@ -44,12 +46,14 @@ fun MultiChoiceButtons(
 	selectedOptions: List<Boolean>,
 	onCheckedChange: (Int, Boolean) -> Unit
 ) {
-	options.plusAssign(Pair("Reset", SegmentedButtonParameter(
-		label = { Icon(Icons.Default.Refresh, contentDescription = "Reset") }
+	val resetText = stringResource(R.string.reset)
+	options.plusAssign(Pair(
+		resetText, SegmentedButtonParameter(
+		label = { Icon(Icons.Default.Refresh, contentDescription = resetText) }
 	)))
 	MultiChoiceSegmentedButtonRow {
 		options.keys.forEachIndexed { index, key ->
-			val checked = if (key == "Reset") false else selectedOptions[index]
+			val checked = if (key == resetText) false else selectedOptions[index]
 			val parameter = options[key]
 			SegmentedButton(
 				shape = SegmentedButtonDefaults.itemShape(
@@ -58,9 +62,11 @@ fun MultiChoiceButtons(
 				),
 				checked = checked,
 				onCheckedChange = {
-					if (key == "Reset") selectedOptions.forEachIndexed { index, _ -> onCheckedChange(index, true) }
-					else onCheckedChange(index, !checked)
-													},
+					when (key) {
+						resetText -> selectedOptions.forEachIndexed { index, _ -> onCheckedChange(index, true) }
+						else -> onCheckedChange(index, !checked)
+					}
+				},
 				icon = { SegmentedButtonDefaults.Icon(active = checked) },
 				label = parameter?.label ?: {  }
 			)

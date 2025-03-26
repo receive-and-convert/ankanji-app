@@ -1,6 +1,5 @@
 package com.receiveandconvert.ankanji.component.button
 
-import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -45,7 +44,6 @@ fun OrderButtons(
 						count = options.size
 					),
 					onClick = {
-						Log.d("AnimatedOrderedList", "selectedIndex: $selectedIndex")
 						selectedIndex = index
 						when (options[selectedIndex]) {
 							"Alphabetical" -> orderAlphabetically()
