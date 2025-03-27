@@ -39,15 +39,6 @@ android {
     }
 }
 
-// Create task to generate  APK
-tasks.register("generateReleaseApk") {
-    dependsOn("assembleRelease")
-    doLast {
-        val apk = file("outputs/apk/Ankanji.apk")
-        println("APK generated at ${apk.absolutePath}")
-    }
-}
-
 dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
