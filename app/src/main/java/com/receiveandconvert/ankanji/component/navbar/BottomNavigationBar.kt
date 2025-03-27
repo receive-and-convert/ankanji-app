@@ -12,26 +12,24 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.tooling.preview.Preview
-import com.receiveandconvert.ankanji.enum.Navigation
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
+import com.receiveandconvert.ankanji.navigation.Navigation
 
 @Preview
 @Composable
 private fun Preview() {
-	var selectedTab by remember { mutableIntStateOf(Navigation.DECKS.ordinal) }
-
-	BottomNavigationBar(onTabSelected = {
-		selectedTab = it
-	})
+	BottomNavigationBar(navController = rememberNavController())
 }
 
 @Composable
-fun BottomNavigationBar(onTabSelected: (Int) -> Unit) {
+fun BottomNavigationBar(navController: NavController) {
 	BottomAppBar(
 		actions = {
-			IconButton(onClick = { onTabSelected(Navigation.DECKS.ordinal) }) {
+			IconButton(onClick = { navController.navigate(Navigation.DECKS.name) }) {
 				Icon(Icons.Filled.Star, contentDescription = Navigation.DECKS.username)
 			}
-			IconButton(onClick = { onTabSelected(Navigation.LISTS.ordinal) }) {
+			IconButton(onClick = { navController.navigate(Navigation.LISTS.name) }) {
 				Icon(Icons.AutoMirrored.Filled.List, contentDescription = Navigation.LISTS.username)
 			}
 		}

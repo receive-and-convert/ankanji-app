@@ -39,6 +39,15 @@ android {
     }
 }
 
+// Create task to generate  APK
+tasks.register("generateReleaseApk") {
+    dependsOn("assembleRelease")
+    doLast {
+        val apk = file("outputs/apk/Ankanji.apk")
+        println("APK generated at ${apk.absolutePath}")
+    }
+}
+
 dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
@@ -50,8 +59,9 @@ dependencies {
     implementation(libs.androidx.material3)
     implementation(libs.file.opencsv)
     implementation(libs.bundles.androidx.paging)
+    implementation(libs.androidx.navigation.compose)
 
-    testImplementation(libs.junit)
+    testImplementation(libs.bundles.test.unit)
 
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
