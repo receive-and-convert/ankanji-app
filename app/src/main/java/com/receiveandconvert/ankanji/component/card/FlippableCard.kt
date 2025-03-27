@@ -1,7 +1,6 @@
 package com.receiveandconvert.ankanji.component
 
 import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -12,7 +11,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Badge
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Text
@@ -31,10 +29,13 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.receiveandconvert.ankanji.component.badge.CardLeveLBadge
+import com.receiveandconvert.ankanji.component.badge.CardTypeBadge
 import com.receiveandconvert.ankanji.model.card.Card
 import com.receiveandconvert.ankanji.model.card.CardType
 import com.receiveandconvert.ankanji.model.constant.DummyData.dummyCard
 import com.receiveandconvert.ankanji.model.constant.DummyData.dummyCards
+import com.receiveandconvert.ankanji.model.constant.DummyData.dummyVocabularyCards
 import com.receiveandconvert.ankanji.ui.theme.AnkanjiTheme
 import com.receiveandconvert.ankanji.ui.theme.ExpressionBackCardColor
 import com.receiveandconvert.ankanji.ui.theme.ExpressionFrontCardColor
@@ -67,14 +68,14 @@ fun FlippableCard(
   val rotation by animateFloatAsState(if (isFlipped) 180f else 0f, visibilityThreshold = 0.1f)
 
   Box(
-    modifier = modifier
-      .fillMaxWidth()
-      .height(350.dp)
-      .graphicsLayer {
-        rotationY = rotation
-        cameraDistance = 12f * density
-      }
-      .clickable { onFlipped(!isFlipped) },
+		modifier = modifier
+			.fillMaxWidth()
+			.height(350.dp)
+			.graphicsLayer {
+				rotationY = rotation
+				cameraDistance = 12f * density
+			}
+			.clickable { onFlipped(!isFlipped) },
     contentAlignment = Alignment.Center
   ) {
     if (rotation <= 90f) {
@@ -88,7 +89,7 @@ fun FlippableCard(
 @Preview(widthDp = 175, heightDp = 175)
 @Composable
 fun FrontCardPreview() {
-  FrontCardContent(dummyCard)
+  FrontCardContent(dummyVocabularyCards.first())
 }
 
 @Composable
@@ -103,11 +104,9 @@ fun FrontCardContent(card: Card) {
   ) {
     Box(modifier = Modifier.fillMaxSize()) {
       Column(
-        modifier = Modifier
-          .fillMaxWidth()
-          .align(Alignment.Center)
+        modifier = Modifier.fillMaxWidth().align(Alignment.Center)
       ) {
-        if (card.type == CardType.VOCABULARY) {
+        if (card.type == CardType.VOCABULARY && card.kanji.isNotEmpty()) {
           Text(
             text = card.kanji,
             style = TextStyle(
@@ -121,34 +120,20 @@ fun FrontCardContent(card: Card) {
         Text(
           text = if (card.type != CardType.VOCABULARY && card.kanji.isNotEmpty()) card.kanji else card.kana,
           style = TextStyle(
-            fontSize = 48.sp,
+            fontSize = 36.sp,
             fontWeight = FontWeight.SemiBold,
             textAlign = TextAlign.Center
           ),
           modifier = Modifier.fillMaxWidth()
         )
       }
-      Box(
-        modifier = Modifier
-          .fillMaxWidth()
-          .padding(4.dp)
-      ) {
+      Box(modifier = Modifier.fillMaxWidth().padding(4.dp)) {
         Row(
           horizontalArrangement = Arrangement.SpaceBetween,
           modifier = Modifier.fillMaxWidth()
         ) {
-          Badge(containerColor = card.type.tint, modifier = Modifier.border(1.dp, Color.Black, RoundedCornerShape(12.dp))) {
-            Text(
-              text = card.type.username,
-              fontSize = 12.sp
-            )
-          }
-          Badge(containerColor = card.level.tint, modifier = Modifier.border(1.dp, Color.Black, RoundedCornerShape(12.dp))) {
-            Text(
-              text = card.level.name,
-              fontSize = 12.sp
-            )
-          }
+          CardTypeBadge(card)
+          CardLeveLBadge(card)
         }
       }
     }
@@ -171,49 +156,39 @@ fun BackCardContent(card: Card) {
       containerColor = card.determineContainerColor(true),
       contentColor = Color.Black
     ),
-    modifier = Modifier
-      .fillMaxSize()
-      .graphicsLayer { rotationY = 180f }
+    modifier = Modifier.fillMaxSize().graphicsLayer { rotationY = 180f }
   ) {
     Box(modifier = Modifier.fillMaxSize()) {
       Column(
-        modifier = Modifier
-          .align(Alignment.Center)
-          .fillMaxWidth(),
+        modifier = Modifier.align(Alignment.Center).fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(8.dp)
       ) {
-        Text(
-          text = card.kana,
-          fontSize = 30.sp
-        )
+        if (card.type == CardType.VOCABULARY && card.kanji.isNotEmpty()) {
+          Text(
+            text = card.kanji,
+            fontSize = 15.sp
+          )
+        }
+        if (card.type != CardType.VOCABULARY) {
+          Text(
+            text = card.kana,
+            fontSize = 28.sp
+          )
+        }
         Text(
           text = card.translation,
           fontSize = 18.sp,
           textAlign = TextAlign.Center
         )
       }
-      Box(
-        modifier = Modifier
-          .fillMaxWidth()
-          .padding(4.dp)
-      ) {
+      Box(modifier = Modifier.fillMaxWidth().padding(4.dp)) {
         Row(
           horizontalArrangement = Arrangement.SpaceBetween,
           modifier = Modifier.fillMaxWidth()
         ) {
-          Badge(containerColor = Color.White, modifier = Modifier.border(1.dp, Color.Black, RoundedCornerShape(12.dp))) {
-            Text(
-              text = card.type.username,
-              fontSize = 12.sp
-            )
-          }
-          Badge(containerColor = card.level.tint, modifier = Modifier.border(1.dp, Color.Black, RoundedCornerShape(12.dp))) {
-            Text(
-              text = card.level.name,
-              fontSize = 12.sp
-            )
-          }
+          CardTypeBadge(card)
+          CardLeveLBadge(card)
         }
       }
     }
@@ -221,7 +196,7 @@ fun BackCardContent(card: Card) {
 }
 
 @Composable
-private fun Card.determineContainerColor(isFlipped: Boolean) = when (type) {
+internal fun Card.determineContainerColor(isFlipped: Boolean) = when (type) {
   CardType.EXPRESSION -> if (!isFlipped) ExpressionFrontCardColor else ExpressionBackCardColor
   CardType.KANJI -> if (!isFlipped) KanjiCardFrontColor else KanjiCardBackColor
   CardType.VOCABULARY -> if (!isFlipped) VocabularyFrontCardColor else VocabularyBackCardColor

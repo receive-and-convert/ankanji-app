@@ -9,9 +9,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.rememberNavController
-import com.receiveandconvert.ankanji.provider.CardProvider
 import com.receiveandconvert.ankanji.provider.CardProviderImpl
-import com.receiveandconvert.ankanji.provider.DeckProvider
 import com.receiveandconvert.ankanji.provider.DeckProviderImpl
 import com.receiveandconvert.ankanji.ui.theme.AnkanjiTheme
 
@@ -22,12 +20,11 @@ class MainActivity : ComponentActivity() {
     enableEdgeToEdge()
     setContent {
       AnkanjiTheme {
-        val resources = LocalContext.current.resources
-        val cardProvider: CardProvider = CardProviderImpl(resources = resources)
-        val deckProvider: DeckProvider = DeckProviderImpl()
-        val navController = rememberNavController()
-
-        AppNavigationGraph(navController, cardProvider, deckProvider)
+        AppNavigationGraph(
+					navController = rememberNavController(),
+					cardProvider = CardProviderImpl(resources = resources),
+					deckProvider = DeckProviderImpl()
+				)
       }
     }
   }
@@ -36,7 +33,10 @@ class MainActivity : ComponentActivity() {
 @Preview
 @Composable
 private fun Preview() {
-  val navController = rememberNavController()
-  AppNavigationGraph(navController, CardProviderImpl(LocalContext.current.resources), DeckProviderImpl())
+  AppNavigationGraph(
+		navController = rememberNavController(),
+		cardProvider = CardProviderImpl(LocalContext.current.resources),
+		deckProvider = DeckProviderImpl()
+	)
 }
 

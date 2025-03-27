@@ -1,22 +1,14 @@
 package com.receiveandconvert.ankanji.provider
 
 import com.receiveandconvert.ankanji.model.Deck
+import com.receiveandconvert.ankanji.model.constant.DummyData.dummyDecks
 
 class DeckProviderImpl : DeckProvider {
 	override fun getDecks(): List<Deck> {
-		return listOf(
-			Deck(
-				id = 1,
-				name = "Deck 1",
-				description = "Description 1",
-				cardCount = 10
-			),
-			Deck(
-				id = 2,
-				name = "Deck 2",
-				description = "Description 2",
-				cardCount = 20
-			)
-		)
+		return dummyDecks
+	}
+
+	override fun getDeckById(deckId: Long): Deck? {
+		return dummyDecks.find { it.id.toLong() == deckId }
 	}
 }

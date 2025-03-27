@@ -37,14 +37,14 @@ android {
     buildFeatures {
         compose = true
     }
+}
 
-    productFlavors {
-        create("dev") {
-            dimension = "environment"
-        }
-        create("prod") {
-            dimension = "environment"
-        }
+// Create task to generate  APK
+tasks.register("generateReleaseApk") {
+    dependsOn("assembleRelease")
+    doLast {
+        val apk = file("outputs/apk/Ankanji.apk")
+        println("APK generated at ${apk.absolutePath}")
     }
 }
 

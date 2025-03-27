@@ -41,11 +41,12 @@ fun DeckAnimatedList(
 				headlineContent = { Text(item.name) },
 				trailingContent = {
 					IconButton(
-						onClick = { onClick(item) }
+						onClick = { onClick(item) },
+						enabled = item.enabled
 					) {
 						Icon(Icons.Filled.PlayArrow,
 							contentDescription = "Play",
-							tint = PlayIconColor
+							tint = if (item.enabled) PlayIconColor else PlayIconColor.copy(alpha = 0.3f)
 						)
 					}
 				},

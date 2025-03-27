@@ -32,7 +32,11 @@ class CardProviderImpl(
 		val selectedTypes = if (input.cardTypes.isEmpty()) CardType.entries else input.cardTypes
 
 		// Iterate over the selected levels and types.
-		selectedLevels.forEach { level -> selectedTypes.forEach { type -> fetchAssign(level, type) } }
+		selectedLevels.forEach { level ->
+			selectedTypes.forEach { type ->
+				fetchAssign(level, type)
+			}
+		}
 
 		return cards
 	}

@@ -3,6 +3,8 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
@@ -44,15 +46,20 @@ fun AppNavigationGraph(
     bottomBar = { BottomNavigationBar(navController) }
   ) { innerPadding ->
     val combinedPaddingValues = innerPadding.add(PaddingValues(10.dp))
+    var cards = remember { cardProvider.getCards().toMutableStateList() }
+    var decks = remember { deckProvider.getDecks().toMutableStateList() }
+
     NavHost(
 			navController = navController,
 			startDestination = Navigation.DECKS.baseRoute,
 			modifier = Modifier.padding(combinedPaddingValues)
 		) {
-      composable(Navigation.DECKS.baseRoute) { DeckScreen(deckProvider.getDecks(), navController) }
-      composable(Navigation.LISTS.baseRoute) { ListScreen(cardProvider.getCards()) }
+      composable(Navigation.DECKS.baseRoute) { DeckScreen(decks, navController) }
+      composable(Navigation.LISTS.baseRoute) { ListScreen(cards) }
       composable("${Navigation.DECK_FLASHCARD.baseRoute}/{deckId}") { backStackEntry ->
-        val cards = cardProvider.getCards()
+        val deckId = backStackEntry.arguments?.getString("deckId")?.toLong() ?: return@composable DeckScreen(decks, navController)
+        val cardFilter = deckProvider.getDeckById(deckId)?.cardFilter ?: return@composable DeckScreen(decks, navController)
+        val cards = cardProvider.getCards(cardFilter)
         FlashCard(cards)
       }
     }
